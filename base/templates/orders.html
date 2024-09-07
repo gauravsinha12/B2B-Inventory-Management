@@ -1,0 +1,72 @@
+{% extends base %}
+{% load static %}
+{% block body %}
+    {% if user.is_authenticated %}
+        <div class="w-fit">
+            <div class="flex md:mx-32 m-4 items-center gap-4 dark:bg-green-trans bg-orange-trans px-2 rounded-xl bg-opacity-30 dark:bg-opacity-30 backdrop-blur-lg shadow-lg">
+                {% if previous %}
+                    <a class="text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-800 px-2 py-1 rounded-lg"
+                       href="{% url "my_orders" %}"
+                       hx-boost="true"
+                       hx-target="#main"
+                       hx-indicator="#baseLoading">Your Orders</a>
+                    <h1 class="my-4 text-sm text-center text-gray-900 dark:text-gray-100 font-semibold px-2 py-1 rounded-lg bg-orange-trans dark:bg-green-trans">
+                        Previous Orders
+                    </h1>
+                {% else %}
+                    <h1 class="my-4 text-sm text-center text-gray-900 dark:text-gray-100 font-semibold px-2 py-1 rounded-lg bg-orange-trans dark:bg-green-trans">
+                        Your Orders
+                    </h1>
+                    <a class="text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-800 px-2 py-1 rounded-lg"
+                       href="{% url "previous_orders" %}"
+                       hx-boost="true"
+                       hx-target="#main"
+                       hx-indicator="#baseLoading">Previous Orders</a>
+                {% endif %}
+            </div>
+        </div>
+        {% if page.object_list %}
+            <div class="flex flex-1 lg:px-32 px-4 gap-4 flex-wrap justify-around items-center relative overflow-x-auto">
+                {% for order in page.object_list %}
+                    {% include "partials/orderCard.html" %}
+                {% endfor %}
+            </div>
+        {% else %}
+            {% if not previous %}
+                <p class="text-center text-xl text-gray-800 dark:text-gray-200">
+                    Your don't have any orders
+                    <a href="{% url 'home' %}"
+                       hx-boost="true"
+                       hx-target="#main"
+                       hx-indicator="#baseLoading"
+                       class="text-blue-500">Explore</a> to order some products.
+                </p>
+            {% else %}
+                <p class="text-center text-xl text-gray-800 dark:text-gray-200">
+                    Your don't have any previous orders
+                    <a href="{% url 'my_orders' %}"
+                       hx-boost="true"
+                       hx-target="#main"
+                       hx-indicator="#baseLoading"
+                       class="text-blue-500">Go Back</a> to my order page.
+                </p>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <p class="text-center text-xl text-gray-800 dark:text-gray-200">
+            You need to be logged in to view your Orders. Please
+            <a hx-boost="true"
+               hx-target="#main"
+               hx-indicator="#baseLoading"
+               class="text-blue-500"
+               href="{% url 'signin' %}">Login Here.</a>
+        </p>
+    {% endif %}
+    {% if previous %}
+        {% url "previous_orders" as previous_orders %}
+        {% include "partials/pagignation.html" with page=page url=previous_orders %}
+    {% else %}
+        {% url "my_orders" as my_orders %}
+        {% include "partials/pagignation.html" with page=page url=my_orders %}
+    {% endif %}
+{% endblock body %}

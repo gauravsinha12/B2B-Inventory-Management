@@ -1,0 +1,11 @@
+<div id="atc-{{ cart.id }}">
+    <form hx-post="{% url 'add_to_cart' %}" hx-target="#atc-{{ cart.id }}" class="focus:outline-none">
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{ cart.id }}">
+        <input type="hidden" name="action" value="add">
+        <button name="submit"
+                class="flex items-center">
+            {% include "icons/cart2.html" %}
+        </button>
+    </form>
+</div>

@@ -1,0 +1,12 @@
+<td hx-target="this" hx-swap="outerHTML">
+    <form hx-post="{% url 'field_edit' %}"
+          class="p-2 flex font-semibold items-center">
+        <input type="hidden" name="user" value="{{ user }}">
+        <input name="fieldName" type="hidden" value="{{ fieldName }}" />
+        <input name="product" type="hidden" value="{{ product }}" />
+        <input id="field" name="field" type="hidden" value="{{ field }}" />
+        <label for="field"
+               class="text-sm text-left text-gray-500 dark:text-gray-400 px-2">{{ field }}</label>
+        <button type="submit" class="px-2">{% include "icons/edit.html" %}</button>
+    </form>
+</td>

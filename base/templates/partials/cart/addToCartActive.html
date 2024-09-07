@@ -1,0 +1,10 @@
+<div id="atc-{{ cart.product.id }}">
+    <form hx-post="{% url 'add_to_cart' %}"
+          hx-target="#atc-{{ cart.product.id }}"
+          class="flex items-center text-center font-medium text-gray-200 dark:text-gray-800 focus:outline-none bg-green-trans dark:bg-orange-trans rounded-full">
+        <input type="hidden" name="product" value="{{ cart.product.id }}">
+        <button type="submit" name="action" value="remove" class="rounded-l-lg">{% include "icons/delete.html" %}</button>
+        <span class="dark:bg-orange-trans bg-green-trans">{{ cart.quantity }}</span>
+        <button type="submit" name="action" value="add" class="rounded-3-lg">{% include "icons/add.html" %}</button>
+    </form>
+</div>

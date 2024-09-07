@@ -1,0 +1,31 @@
+{% load customtags %}
+<h1 class="my-4 w-full text-2xl text-center text-gray-800 dark:text-gray-200">Address</h1>
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="px-4 py-3">Address</th>
+            <th scope="col" class="px-4 py-3">City</th>
+            <th scope="col" class="px-4 py-3">State</th>
+            <th scope="col" class="px-4 py-3">Pincode</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if address %}
+            <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                <td class="px-4 py-3">{{ address.address|slice:60 }}...</td>
+                <td class="px-4 py-3">{{ address.city }}</td>
+                <td class="px-4 py-3">{% state_name address.state %}</td>
+                <td class="px-4 py-3">{{ address.pincode }}</td>
+            </tr>
+        {% else %}
+            {% for address in addresses %}
+                <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                    <td class="px-4 py-3">{{ address.address|slice:60 }}...</td>
+                    <td class="px-4 py-3">{{ address.city }}</td>
+                    <td class="px-4 py-3">{% state_name address.state %}</td>
+                    <td class="px-4 py-3">{{ address.pincode }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

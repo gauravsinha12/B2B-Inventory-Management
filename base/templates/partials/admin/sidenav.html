@@ -1,0 +1,81 @@
+<nav id="sidenav"
+     class="z-20 transition-colors duration-500 flex shrink-0 grow-0 justify-around gap-4 bg-opacity-30 dark:bg-opacity-30 bg-orange-trans dark:bg-green-trans p-2.5 shadow-lg backdrop-blur-lg md:fixed relative mx-auto md:top-2/4 -translate-y-2/4 md:left-6 bottom-2 min-h-[auto] md:min-w-[64px] md:flex-col flex-wrap rounded-lg">
+    <a id="products"
+       hx-boost="true"
+       href="{% url 'admin_products' %}"
+       hx-target="#main"
+       hx-indicator="#baseLoading"
+       class="{% if active == 0 %}bg-orange-trans dark:bg-green-trans{% endif %} flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-xl p-1.5 text-gray-700 dark:text-gray-400  hover:bg-gray-100 dark:hover:bg-slate-800">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6 pointer-events-none">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        <small class="text-center text-xs font-medium">Products</small>
+    </a>
+    <a id="users"
+       hx-boost="true"
+       hx-target="#main"
+       hx-indicator="#baseLoading"
+       href="{% url 'admin_users' %}"
+       class="{% if active == 1 %}bg-orange-trans dark:bg-green-trans{% endif %} flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-xl p-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-slate-800">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-6 h-6 shrink-0 pointer-events-none">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+        <small class="text-center text-xs font-medium">Users</small>
+    </a>
+    <a id="enquiry"
+       hx-boost="true"
+       hx-target="#main"
+       hx-indicator="#baseLoading"
+       href="{% url 'admin_enquiries' %}"
+       class="{% if active == 2 %}bg-orange-trans dark:bg-green-trans{% endif %} flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-xl p-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-slate-800">
+        <svg version="1.0"
+             viewBox="0 0 512.000000 512.000000"
+             preserveAspectRatio="xMidYMid meet"
+             stroke="currentColor"
+             class="w-6 h-6 shrink-0 pointer-events-none">
+            <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="currentColor" stroke="none">
+            <path d="M4118 4900 c-322 -51 -576 -324 -595 -639 -4 -72 -2 -92 15 -121 40 -73 122 -104 198 -75 65 25 94 68 105 157 4 40 13 89 20 108 57 162 243 279 400 251 128 -22 256 -124 300 -239 15 -41 22 -78 22 -132 -1 -131 -44 -206 -197 -342 -229 -202 -320 -306 -375 -430 -62 -137 -81 -310 -41 -375 52 -86 165 -102 244 -33 37 33 56 85 56 154 0 63 31 147 77 208 21 27 94 98 163 158 221 192 296 282 349 419 55 142 61 275 20 429 -86 325 -432 553 -761 502z" />
+            <path d="M1920 4670 c-430 -93 -753 -423 -835 -853 -32 -167 -14 -388 45 -548 161 -442 587 -729 1050 -706 397 20 740 247 912 604 274 570 -3 1245 -601 1463 -167 61 -399 77 -571 40z m453 -337 c123 -43 189 -85 287 -183 95 -94 150 -186 191 -320 31 -97 33 -289 6 -390 -71 -261 -278 -468 -537 -537 -101 -27 -293 -24 -390 6 -134 41 -226 96 -320 191 -98 98 -140 164 -183 287 -42 121 -50 288 -18 414 68 273 269 477 541 549 61 16 100 19 205 17 115 -3 140 -7 218 -34z" />
+            <path d="M3994 2747 c-166 -80 -205 -297 -74 -427 101 -102 254 -106 363 -10 62 55 90 124 85 209 -5 77 -25 125 -75 174 -50 51 -97 71 -178 75 -58 2 -79 -1 -121 -21z" />
+            <path d="M725 2112 c-120 -41 -205 -117 -258 -230 l-32 -67 0 -210 c0 -189 2 -218 23 -289 46 -159 124 -288 252 -416 221 -221 558 -372 988 -441 165 -27 537 -37 708 -19 480 48 867 196 1111 423 128 120 239 297 279 447 9 36 23 70 31 77 12 10 14 46 11 215 -3 178 -6 209 -25 256 -32 79 -97 158 -166 203 -114 74 -9 69 -1516 69 -1260 -1 -1360 -2 -1406 -18z m2746 -312 c39 -21 49 -62 49 -192 0 -68 -7 -153 -15 -191 -50 -236 -279 -437 -633 -556 -212 -71 -400 -101 -667 -108 -447 -12 -814 69 -1109 244 -118 70 -243 197 -289 293 -47 100 -57 155 -57 321 l0 141 29 29 29 29 1322 0 c887 0 1328 -3 1341 -10z" />
+            </g>
+        </svg>
+        <small class="text-center text-xs font-medium">Enquiry</small>
+    </a>
+    <a id="orders"
+       hx-boost="true"
+       hx-target="#main"
+       hx-indicator="#baseLoading"
+       href="{% url 'admin_orders' %}"
+       class="{% if active == 3 %}bg-orange-trans dark:bg-green-trans{% endif %} flex aspect-square  min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-xl p-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-slate-800">
+        <svg version="1.0"
+             viewBox="0 0 512.000000 512.000000"
+             preserveAspectRatio="xMidYMid meet"
+             stroke="currentColor"
+             class="w-6 h-6 shrink-0 pointer-events-none">
+            <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="currentColor" stroke="none">
+            <path d="M615 4908 c-3 -7 -4 -1068 -3 -2358 l3 -2345 1278 -3 c702 -1 1277 1 1277 6 0 4 -25 41 -56 82 -31 41 -61 85 -67 97 l-10 23 -1109 0 -1108 0 0 2150 0 2150 1740 0 1740 0 0 -1237 0 -1238 88 -21 c48 -12 94 -23 102 -25 13 -4 15 153 15 1361 l0 1365 -1943 3 c-1549 2 -1944 0 -1947 -10z" />
+            <path d="M1330 3890 l0 -100 1230 0 1230 0 0 100 0 100 -1230 0 -1230 0 0 -100z" />
+            <path d="M1330 2460 l0 -100 205 0 205 0 0 100 0 100 -205 0 -205 0 0 -100z" />
+            <path d="M2050 2460 l0 -100 870 0 870 0 0 100 0 100 -870 0 -870 0 0 -100z" />
+            <path d="M3962 2040 c-413 -58 -751 -360 -858 -766 -23 -86 -27 -119 -27 -249 0 -129 4 -163 26 -247 77 -293 263 -525 527 -662 555 -287 1232 -12 1435 584 191 560 -143 1169 -722 1316 -108 27 -280 38 -381 24z m363 -230 c357 -114 586 -420 586 -783 0 -235 -74 -412 -240 -578 -166 -166 -343 -240 -578 -240 -365 0 -671 231 -785 591 -20 65 -23 96 -23 225 0 129 3 160 23 225 69 218 218 399 411 498 146 76 222 92 401 88 105 -3 150 -8 205 -26z" />
+            <path d="M4265 1178 c-148 -172 -271 -316 -274 -320 -4 -5 -81 48 -171 117 -91 69 -168 125 -172 125 -10 0 -118 -144 -118 -156 0 -9 449 -355 468 -362 6 -2 164 173 351 388 l341 391 -71 62 c-39 34 -74 63 -79 65 -4 2 -128 -138 -275 -310z" />
+            <path d="M1337 1943 c-4 -3 -7 -51 -7 -105 l0 -98 205 0 205 0 0 105 0 105 -198 0 c-109 0 -202 -3 -205 -7z" />
+            <path d="M2050 1845 l0 -105 524 0 524 0 37 48 c21 26 63 73 94 105 l55 57 -617 0 -617 0 0 -105z" />
+            <path d="M1330 1230 l0 -100 205 0 205 0 0 100 0 100 -205 0 -205 0 0 -100z" />
+            <path d="M2050 1230 l0 -100 410 0 410 0 4 23 c2 12 10 57 18 100 l14 77 -428 0 -428 0 0 -100z" />
+            </g>
+        </svg>
+        <small className="text-xs font-medium">Orders</small>
+    </a>
+</nav>

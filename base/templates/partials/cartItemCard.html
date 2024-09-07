@@ -1,0 +1,44 @@
+{% load customtags %}
+<div class="flex flex-items-center justify-around rounded-xl shadow-md bg-gray-100 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-50">
+    <div class="flex flex-col justify-center items-center p-4 relative overflow-hidden">
+        <img width=""
+             height=""
+             class="w-40 h-40 rounded-md object-cover"
+             src="{{ cartItem.product.image1.url }}"
+             alt="{{ cartItem.product.name }}">
+        <span class="absolute top-0 right-0 m-2 rounded-full bg-green-trans dark:bg-orange-trans px-2 text-center text-sm font-medium text-gray-200 dark:text-gray-800">
+            {{ cartItem.product.category }}
+        </span>
+    </div>
+    <div class="flex flex-col justify-around items-center p-2">
+        <div>
+            <p class="text-center text-sm text-gray-800 dark:text-gray-200 font-semibold">{{ cartItem.product.brand }}</p>
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">{{ cartItem.product.name }}</p>
+            <p class="text-center text-sm text-gray-800 dark:text-gray-200 font-semibold">
+                ₹
+                {% if request.user.is_business %}
+                    {% discount cartItem.product.businessPrice cartItem.product.discount request.user.additional_discount %}
+                {% else %}
+                    {% discount cartItem.product.price cartItem.product.discount request.user.additional_discount %}
+                {% endif %}
+                /-
+            </p>
+            <p class="text-gray-800 text-center dark:text-gray-200 font-semibold">
+                {% if request.user.is_business %}
+                    {{ cartItem.product.inCase }}/Case
+                {% else %}
+                    {{ cartItem.product.packOf }}/Box
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">₹ {{ cartItem.discountedPrice }}</p>
+            <p class="text-center text-sm text-gray-500 dark:text-gray-200 line-through">
+                {% if cartItem.totalPrice > cartItem.discountedPrice %}₹ {{ cartItem.totalPrice }}{% endif %}
+            </p>
+            <div class="flex flex-row items-center justify-center">
+                {% include "partials/admin/fieldEdit.html" with field=cartItem.quantity product=cartItem.product.id fieldName="cartQuantity" %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+{% autoescape off %}
+    Hi {{ user.full_name }},
+    
+    Thankyou for creating an account with Shree Shyam Fireworks, Please use this link below to confirm your email Id:,
+    
+    Activation Link:{{ domain }}/activate/{{ uid }}/{{ token }}
+
+    Thank You,
+    Team Shree Shyam Fireworks
+{% endautoescape %}

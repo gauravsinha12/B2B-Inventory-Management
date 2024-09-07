@@ -1,0 +1,31 @@
+<div x-show="showModal"
+     class="absolute text-gray-500 flex items-center justify-center overflow-auto z-50 bg-black bg-opacity-30 left-0 right-0 top-0 bottom-0"
+     x-transition:enter="transition ease duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease duration-300"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0">
+     <!-- Modal -->
+     <a href="" class="h-4/5"></a>
+     <div id="modalContent"
+          x-show="showModal"
+          class="bg-gray-100 dark:bg-gray-900 rounded-xl shadow-2xl relative overflow-x-auto md:mx-32 mx-4 {% if h %}{{ h }}{% else %}h-auto{% endif %}"
+          @click.away="showModal = false; removeAllChild();"
+          x-transition:enter="transition ease duration-100 transform"
+          x-transition:enter-start="opacity-0 scale-90 translate-y-1"
+          x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+          x-transition:leave="transition ease duration-100 transform"
+          x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+          x-transition:leave-end="opacity-0 scale-90 translate-y-1"></div>
+</div>
+<script>
+     function addChildToModal(child) {
+         let modal = document.querySelector('#modalContent');
+         modal.innerHTML = child;
+     }
+     function removeAllChild(){
+         let modal = document.querySelector('#modalContent');
+         modal.innerHTML = "";
+     }
+</script>

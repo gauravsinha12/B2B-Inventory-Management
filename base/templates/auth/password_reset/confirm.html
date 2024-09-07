@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% block body %}
+    {% if validlink %}
+        <div class="mx-auto block max-w-xs px-8 py-5 rounded-lg shadow-2xl text-gray-800 dark:text-gray-200 bg-opacity-30 dark:bg-opacity-30 bg-orange-trans dark:bg-green-trans backdrop-blur-lg">
+            <h1 class="text-2xl font-semibold">Set Password.</h1>
+            <br />
+            <form method="post">
+                {% csrf_token %}
+                {% for el in form %}
+                    <div class="container">
+                        <div class="input-field">{{ el }}</div>
+                        <small class="orange accent-2">{{ el.errors|striptags }}</small>
+                    </div>
+                    <script>
+                        input = document.getElementById("{{el.id_for_label}}");
+						input.placeholder = "{{el.label}}";
+						input.classList.add("outline-none", "w-full", "rounded", "bg-transparent", "text-sm", "text-black", "dark:text-white", "font-semibold", "transition-all", "duration-200", "ease-in-out", "p-2");
+                    </script>
+                {% endfor %}
+                <center>
+                    <input type="submit"
+                           value="Save"
+                           class="border border-gray-800 dark:border-gray-200 py-2 px-4 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200" />
+                </center>
+            </form>
+            <br>
+            <ul class="list-disc">
+                <li>Your password can't be too similar to your other personal information.</li>
+                <li>Your password must contain at least 8 characters.</li>
+                <li>Your password can't be a commonly used password.</li>
+                <li>Your password can't be entirely numeric.</li>
+            </ul>
+        </div>
+    {% else %}
+        <p class="flex flex-col items-center justify-center py-4">
+            The password reset link was invalid, possibly because it has already been used.
+            Please request a new password reset.
+        </p>
+    {% endif %}
+{% endblock body %}

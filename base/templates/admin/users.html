@@ -1,0 +1,82 @@
+{% extends base %}
+{% block body %}
+    <section>
+        <h1 class="my-4 text-2xl text-center text-gray-800 dark:text-gray-200">Users</h1>
+        <div class="flex flex-wrap gap-4 relative max-h-screen overflow-auto md:mx-32 mx-4 rounded-xl shadow-md">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-4 py-3">Name</th>
+                        <th scope="col" class="px-4 py-3">Email</th>
+                        <th scope="col" class="px-4 py-3">Phone</th>
+                        <th scope="col" class="px-4 py-3">Active</th>
+                        <th scope="col" class="px-4 py-3">Business</th>
+                        <th scope="col" class="px-4 py-3">User Discount</th>
+                        <th scope="col" class="px-4 py-3">Addresses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        {% if user and not user.is_superuser %}
+                            <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                <td scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white cursor-default">
+                                    {{ user.full_name }}
+                                </td>
+                                <td class="px-4 py-3 cursor-pointer hover:text-blue-500 dark:hover:text-blue-500 text-gray-900 whitespace-nowrap dark:text-white">
+                                    <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                                </td>
+                                <td class="px-4 py-3 cursor-pointer hover:text-blue-500 dark:hover:text-blue-500 text-gray-900 whitespace-nowrap dark:text-white">
+                                    <a href="tel:{{ user.phone }}">{{ user.phone }}</a>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <form hx-trigger="input from: find #isActive{{ user.id }}"
+                                          hx-post="{% url 'change_user_active' %}"
+                                          hx-target="#main"
+                                          method="post">
+                                        <input type="hidden" name="user" value="{{ user }}">
+                                        <label for="isActive{{ user.id }}"
+                                               class="relative inline-flex items-center cursor-pointer">
+                                            <input id="isActive{{ user.id }}"
+                                                   type="checkbox"
+                                                   {% if user.is_active %}checked{% endif %}
+                                                   class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-800 dark:bg-gray-200 rounded-full peer peer-focus:ring-0 peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-gray-200 dark:after:bg-gray-800  after:border-none after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                                            </div>
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="flex justify-center w-full"
+                                          hx-trigger="input from: find #isBusiness{{ user.id }}"
+                                          hx-post="{% url 'change_is_business' %}"
+                                          hx-target="#main"
+                                          method="post">
+                                        <input type="hidden" name="user" value="{{ user }}">
+                                        <label for="isBusiness{{ user.id }}"
+                                               class="relative inline-flex items-center cursor-pointer">
+                                            <input id="isBusiness{{ user.id }}"
+                                                   type="checkbox"
+                                                   {% if user.is_business %}checked{% endif %}
+                                                   class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-800 dark:bg-gray-200 rounded-full peer peer-focus:ring-0 peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-gray-200 dark:after:bg-gray-800  after:border-none after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                                            </div>
+                                        </label>
+                                    </form>
+                                </td>
+                                {% include "partials/admin/fieldEdit.html" with field=user.additional_discount fieldName="userDiscount" user=user.email %}
+                                <td class="px-4 py-3">
+                                    <button @click='showModal = !showModal; addChildToModal(`{% include "admin/address.html" with addresses=user.addresses.all %}`);'
+                                            class="focus:outline-none focus:ring-0 cursor-pointer hover:text-blue-500 dark:hover:text-blue-500 text-gray-900 whitespace-nowrap dark:text-white">Addresses</button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% url "admin_users" as admin_users %}
+        {% include "partials/pagignation.html" with page=users url=admin_users %}
+    </section>
+    {% include "partials/admin/sidenav.html" with active=1 %}
+{% endblock body %}

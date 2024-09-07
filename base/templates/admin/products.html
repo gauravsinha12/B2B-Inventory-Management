@@ -1,0 +1,225 @@
+{% extends base %}
+{% load static %}
+{% block body %}
+    <section>
+        <div class="flex justify-between items-center md:mx-32 m-4">
+            <div class="flex items-center gap-4 dark:bg-green-trans bg-orange-trans px-2 rounded-xl bg-opacity-30 dark:bg-opacity-30 backdrop-blur-lg shadow-lg">
+                <h1 class="my-4 text-sm text-center text-gray-900 dark:text-gray-100 font-semibold px-2 py-1 rounded-lg {% if nav == 0 %}bg-orange-trans dark:bg-green-trans{% endif %}">Products</h1>
+                <a class="text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-800 px-2 py-1 rounded-lg"
+                   href="{% url "admin_categories" %}"
+                   hx-boost="true"
+                   hx-target="#main"
+                   hx-indicator="#baseLoading">Categories</a>
+                <a class="text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-800 px-2 py-1 rounded-lg"
+                   href="{% url "admin_brands" %}"
+                   hx-boost="true"
+                   hx-target="#main"
+                   hx-indicator="#baseLoading">Brands</a>
+            </div>
+            <a class="text-sm text-gray-900 dark:text-gray-100 bg-orange-trans dark:bg-green-trans px-4 py-1 rounded-lg font-semibold"
+               href="{% url "add_product" %}"
+               hx-boost="true"
+               hx-target="#main"
+               hx-indicator="#baseLoading">Add</a>
+        </div>
+        {% if products %}
+            <div class="flex flex-wrap gap-4 relative max-h-screen overflow-auto md:mx-32 mx-4 rounded-xl shadow-md">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Name</th>
+                            <th scope="col" class="px-4 py-3">Price</th>
+                            <th scope="col" class="px-4 py-3">Business Price</th>
+                            <th scope="col" class="px-4 py-3">Discount</th>
+                            <th scope="col" class="px-4 py-3">Inventory</th>
+                            <th scope="col" class="px-4 py-3">Pack Contains</th>
+                            <th scope="col" class="px-4 py-3">Case Contains</th>
+                            <th scope="col" class="px-4 py-3">
+                                <select hx-target="#main"
+                                        hx-post="{% url 'admin_products' %}"
+                                        class="focus:ring-0 focus:outline-none bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-400 uppercase"
+                                        name="category"
+                                        id="categories">
+                                    <option {% if not selectedCategory %}selected{% endif %} disabled>Category</option>
+                                    <option {% if selectedCategory == 0 %}selected{% endif %} value="">All</option>
+                                    {% for category in categories %}
+                                        <option {% if selectedCategory == category.id %}selected{% endif %}
+                                                value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </th>
+                            <th scope="col" class="px-4 py-3">
+                                <select hx-target="#main"
+                                        hx-post="{% url 'admin_products' %}"
+                                        class="focus:ring-0 focus:outline-none bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-400 uppercase"
+                                        name="brand"
+                                        id="brands">
+                                    <option {% if not selectedBrand %}selected{% endif %} disabled>Brand</option>
+                                    <option {% if selectedBrand == 0 %}selected{% endif %} value="">All</option>
+                                    {% for brand in brands %}
+                                        <option {% if selectedBrand == brand.id %}selected{% endif %}
+                                                value="{{ brand.id }}">{{ brand.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </th>
+                            <th scope="col" class="px-4 py-3">Media</th>
+                            <th scope="col" class="px-4 py-3">Featured</th>
+                            <th scope="col" class="px-4 py-3">Visibility</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for product in products.object_list %}
+                            <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                <td scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <a href="{% url 'get_product' product.id %}">{{ product.name }}</a>
+                                </td>
+                                {% include "partials/admin/fieldEdit.html" with field=product.price fieldName="productPrice" product=product.id %}
+                                {% include "partials/admin/fieldEdit.html" with field=product.businessPrice fieldName="productBusinessPrice" product=product.id %}
+                                {% include "partials/admin/fieldEdit.html" with field=product.discount fieldName="productDiscount" product=product.id %}
+                                {% include "partials/admin/fieldEdit.html" with field=product.inventory fieldName="productInventory" product=product.id %}
+                                {% include "partials/admin/fieldEdit.html" with field=product.packOf fieldName="productPackOf" product=product.id %}
+                                {% include "partials/admin/fieldEdit.html" with field=product.inCase fieldName="productInCase" product=product.id %}
+                                <td class="px-4 py-3 cursor-default">{{ product.category }}</td>
+                                <td class="px-4 py-3 cursor-default">{{ product.brand }}</td>
+                                <td class="py-2">
+                                    {% if product.image1 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image1.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image2 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image2.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image3 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image3.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image4 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image4.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.video %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white"
+                                                @click='showModal = !showModal; addChildToModal(` <iframe src="{{ product.video }}" frameborder="0" height="100%" width="100%" > </iframe> `);'>
+                                            <img src="{% static 'images/video.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form class="flex justify-center w-full"
+                                          hx-trigger="input from: find #featured{{ product.id }}"
+                                          hx-post="{% url 'change_featured' %}"
+                                          hx-target="#main"
+                                          method="post">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <label for="featured{{ product.id }}"
+                                               class="relative inline-flex items-center cursor-pointer">
+                                            <input id="featured{{ product.id }}"
+                                                   type="checkbox"
+                                                   {% if product.featured %}checked{% endif %}
+                                                   class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-800 dark:bg-gray-200 rounded-full peer peer-focus:ring-0 peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-gray-200 dark:after:bg-gray-800  after:border-none after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                                            </div>
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form method="post"
+                                          class="w-full"
+                                          hx-trigger="input from: find #visibility"
+                                          hx-post="{% url 'change_visibility' %}"
+                                          hx-target="#main">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <select name="visibility"
+                                                id="visibility"
+                                                class="w-full bg-gray-50 text-gray-900 text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:text-white focus:ring-0 focus:outline-none">
+                                            <option {% if product.visibility == 2 %}selected{% endif %} value="2">All</option>
+                                            <option {% if product.visibility == 1 %}selected{% endif %} value="1">Business</option>
+                                            <option {% if product.visibility == 0 %}selected{% endif %} value="0">Hidden</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-4">
+                                    <button class="h-full"
+                                            hx-post="{% url "delete_product" %}"
+                                            hx-target="#main"
+                                            name="productID"
+                                            value="{{ product.id }}"
+                                            hx-indicator="#baseLoading">
+                                                {% include "icons/deleteIcon.html" %}
+                                    </button>
+                                </td>
+                                <td class="px-4">
+                                    <a class="h-full"
+                                            href="{% url "edit_product" product.id %}"
+                                            hx-boost="true"
+                                            hx-target="#main"
+                                            hx-indicator="#baseLoading">
+                                                {% include "icons/edit.html" %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% url "admin_products" as admin_products %}
+            {% include "partials/pagignation.html" with page=products url=admin_products %}
+        {% else %}
+            <h1 class="my-4 w-full text-2xl text-center text-gray-800 dark:text-gray-200">You haven't added any products.</h1>
+        {% endif %}
+    </section>
+    {% include "partials/admin/sidenav.html" with active=0 %}
+{% endblock body %}

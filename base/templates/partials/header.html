@@ -1,0 +1,169 @@
+{% load static %}
+<nav class="w-full transition-colors duration-300 sticky top-0 z-20 bg-gray-200 dark:bg-gray-800 py-4 px-8">
+    <div class="flex flex-wrap items-center justify-between w-full">
+        <a hx-boost="true"
+           hx-indicator="#baseLoading"
+           href="{% url 'home' %}"
+           hx-target="#main"
+           class="text-gray-800 cursor-pointer px-2 dark:text-gray-200 md:border-r-2 text-lg font-semibold border-black dark:border-white">
+           <div style="background-image:url({% static 'images/fireworks.gif' %}); background-size:cover; width:40px; height:40px;"></div>
+        </a>
+        <input class="hidden" type="checkbox" id="menu-toggle" />
+        <ul id="menu"
+            class="text-gray-800 md:flex md:flex-1 w-full md:w-auto hidden mx-2 text-sm dark:text-gray-200 items-center md:order-2 order-3">
+            {% if user.is_business %}
+                <li class="px-1">
+                    <a class="cursor-pointer"
+                       href="{% url "all_products" %}"
+                       hx-indicator="#baseLoading"
+                       hx-target="#main"
+                       hx-boost="true">All Products</a>
+                </li>
+            {% else %}
+                <li class="px-1">
+                    <a class="cursor-pointer"
+                       href="{% url "featured_products" %}"
+                       hx-indicator="#baseLoading"
+                       hx-target="#main"
+                       hx-boost="true">Featured</a>
+                </li>
+            {% endif %}
+            <li class="px-1">
+                <a class="cursor-pointer"
+                   href="{% url "categories" %}"
+                   hx-indicator="#baseLoading"
+                   hx-target="#main"
+                   hx-boost="true">Categories</a>
+            </li>
+            <li class="px-1">
+                <a class="cursor-pointer"
+                   href="{% url "brands" %}"
+                   hx-indicator="#baseLoading"
+                   hx-target="#main"
+                   hx-boost="true">Brands</a>
+            </li>
+            {% if not user.is_authenticated %}
+                <li class="px-1 md:hidden">
+                    <a class="cursor-pointer"
+                       href="{% url 'signup' %}"
+                       hx-boost="true"
+                       hx-indicator="#baseLoading"
+                       hx-target="#main">SignUp</a>
+                </li>
+                <li class="px-1 md:hidden">
+                    <a class="cursor-pointer"
+                       href="{% url 'signin' %}"
+                       hx-target="#main"
+                       hx-boost="true"
+                       hx-indicator="#baseLoading">SignIn</a>
+                </li>
+            {% endif %}
+            <li class="px-1">
+                <form id="search-form"
+                    hx-trigger="input delay:500ms from:#search-form>[type='search']" 
+                    hx-target="#main"
+                    hx-boost="true"
+                    hx-indicator="#baseLoading"
+                    action="{% url "search" %}"
+                    method="get">
+                    <input type="search" name="search" class="p-2 w-full bg-transparent focus:outline-none text-gray-800 dark:text-gray-200 focus:ring-0" placeholder="Search..." />
+                </form>
+            </li>
+        </ul>
+        <div class="flex items-center gap-4 order-2 md:order-3">
+            {% include "icons/cart.html" %}
+            <label id="swTheme" for="darkToggle" class="cursor-pointer">
+                <span x-show="darkMode">{% include "icons/sun.html" %}</span>
+                <span x-show="!darkMode">{% include "icons/moon.html" %}</span>
+            </label>
+            <input type="checkbox"
+                   id="darkToggle"
+                   class="hidden"
+                   :value="darkMode"
+                   @change="darkMode = !darkMode">
+            {% if user.is_authenticated %}
+                {% if avatars %}
+                    <div class="group relative">
+                        <button class="bg-transparent">{{ avatars|random|safe }}</button>
+                        <div class="bg-orange-trans dark:bg-green-trans hidden backdrop-blur-lg bg-opacity-30 dark:bg-opacity-30 rounded-lg w-40 absolute right-1 top-full transition-all group-focus-within:block group-focus-within:translate-y-1">
+                            <ul class="py-1 text-gray-800 dark:text-gray-200">
+                                <li>
+                                    <a hx-target="#main"
+                                       hx-boost="true"
+                                       hx-indicator="#baseLoading"
+                                       href="{% url 'profile_page' %}"
+                                       class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                        {% include "icons/user.html" %}
+                                        &nbsp;Profile
+                                    </a>
+                                </li>
+                                {% if request.user.is_superuser %}
+                                    <li>
+                                        <a hx-target="#main"
+                                           hx-boost="true"
+                                           hx-indicator="#baseLoading"
+                                           href="{% url 'admin_products' %}"
+                                           class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                            {% include "icons/admin.html" %}
+                                            &nbsp;Admin
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a hx-target="#main"
+                                           hx-boost="true"
+                                           hx-indicator="#baseLoading"
+                                           href="{% url 'my_orders' %}"
+                                           class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                            {% include "icons/user.html" %}
+                                            &nbsp;Orders
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a hx-target="#main"
+                                           hx-boost="true"
+                                           hx-indicator="#baseLoading"
+                                           href="{% url 'enquiries' %}"
+                                           class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                            {% include "icons/enquiry.html" %}
+                                            &nbsp;Enquiries
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a href="{% url 'signout' %}"
+                                       class="flex cursor-pointer items-center px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                        {% include "icons/logout.html" %}
+                                        &nbsp;
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <ul class="text-gray-800 md:flex md:flex-1 w-full md:w-auto hidden text-sm dark:text-gray-200 items-center md:order-2 order-3">
+                    <li class="px-1">
+                        <a class="cursor-pointer"
+                           href="{% url 'signup' %}"
+                           hx-boost="true"
+                           hx-indicator="#baseLoading"
+                           hx-target="#main">SignUp</a>
+                    </li>
+                    <li class="px-1">
+                        <a class="cursor-pointer"
+                           href="{% url 'signin' %}"
+                           hx-boost="true"
+                           hx-indicator="#baseLoading"
+                           hx-target="#main">SignIn</a>
+                    </li>
+                </ul>
+            {% endif %}
+            <label for="menu-toggle"
+                   class="cursor-pointer text-gray-800 dark:text-gray-200 md:hidden block">
+                {% include "icons/menu.html" %}
+            </label>
+        </div>
+    </div>
+</nav>

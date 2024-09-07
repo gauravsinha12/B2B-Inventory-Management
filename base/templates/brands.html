@@ -1,0 +1,28 @@
+{% extends base %}
+{% block body %}
+    <div class="flex flex-wrap justify-center gap-10 lg:p-32 p-4 w-full">
+        {% for brand in page.object_list %}
+            {% load customtags %}
+            <div id="brand_{{ brand.id }}"
+                 class="relative group flex w-full max-w-[250px] flex-col overflow-hidden rounded-xl shadow hover:shadow-xl bg-orange-trans dark:bg-green-trans backdrop-blur-lg bg-opacity-30 dark:bg-opacity-30 transition-transform duration-300">
+                <a hx-boost="true"
+                   hx-target="#main"
+                   href="{% url 'get_brand' brand.id %}">
+                    <div class="flex items-end justify-end h-60 w-full bg-cover"
+                         style="background-image: url('{{ brand.image.url }}');
+                                background-repeat:no-repeat"></div>
+                </a>
+                <div class="mt-4 px-5 pb-5">
+                    <a hx-boost="true"
+                       hx-target="#main"
+                       href="{% url 'get_brand' brand.id %}"
+                       class="flex w-full justify-between items-center">
+                        <span class="text-xl dark:text-gray-200 text-gray-800">{{ brand.name }}</span>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% url "brands" as brands %}
+    {% include "partials/pagignation.html" with page=page url=brands %}
+{% endblock body %}

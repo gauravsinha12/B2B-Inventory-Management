@@ -1,0 +1,53 @@
+{% extends base %}
+{% block body %}
+    <section>
+        {% if enquiries %}
+            <h1 class="my-4 w-full text-2xl text-center text-gray-800 dark:text-gray-200">Enquiries</h1>
+            <div class="flex flex-wrap gap-4 relative max-h-screen overflow-auto md:mx-32 mx-4 rounded-xl shadow-md">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Enquiry</th>
+                            <th scope="col" class="px-4 py-3">Author Email</th>
+                            <th scope="col" class="px-4 py-3">Product</th>
+                            <th scope="col" class="px-4 py-3">Message</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enquiry in enquiries %}
+                            {% if enquiry.is_parent %}
+                                <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                    <td scope="row"
+                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white cursor-pointer hover:text-blue-500 dark:hover:text-blue-500">
+                                        <a href="{% url 'get_enquiry' enquiry.id %}"
+                                           hx-boost="true"
+                                           hx-target="#main">Enquiry By {{ enquiry.author.first_name }}</a>
+                                    </td>
+                                    <td class="px-4 py-3 cursor-default">{{ enquiry.author }}</td>
+                                    <td class="px-4 py-3 cursor-default">{{ enquiry.product }}</td>
+                                    <td class="px-4 py-3 cursor-default">{{ enquiry.message | slice:15 }}...</td>
+                                    <td>
+                                        <button class="flex justify-center items-center h-full px-4"
+                                                hx-post="{% url "delete_enquiry" %}"
+                                                hx-target="#main"
+                                                name="enquiryID"
+                                                value="{{ enquiry.id }}"
+                                                hx-indicator="#baseLoading">
+                                            {% include "icons/deleteIcon.html" %}
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% url "admin_enquiries" as admin_enquiries %}
+            {% include "partials/pagignation.html" with page=enquiries url=admin_enquiries %}
+        {% else %}
+            <h1 class="my-4 w-full text-2xl text-center text-gray-800 dark:text-gray-200">You don't have any enquiries.</h1>
+        {% endif %}
+    </section>
+    {% include "partials/admin/sidenav.html" with active=2 %}
+{% endblock body %}

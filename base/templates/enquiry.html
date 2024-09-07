@@ -1,0 +1,47 @@
+{% extends base %}
+{% block body %}
+  <section>
+    <h1 class="my-8 w-full text-2xl text-center text-gray-800 dark:text-gray-200">Enquiry</h1>
+    <div class="md:w-1/2 w-full mx-auto overflow-y-auto">
+      {% if enquiry.is_parent %}
+        <div class="shadow-md rounded-md cursor-pointer p-4 my-4 mx-4 w-auto bg-orange-trans bg-opacity-40 dark:bg-green-trans dark:bg-opacity-40">
+          <div class="flex justify-between">
+            <h2 class="text-xl text-gray-800 dark:text-gray-200">{{ enquiry.product.name }} - {{ enquiry.product.brand }}</h2>
+            <h2 class="text-gray-800 dark:text-gray-200">{{ enquiry.author }}</h2>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400">{{ enquiry.message }}</p>
+        </div>
+      {% endif %}
+      {% for reply in enquiry.children %}
+        <div class="w-full bg-transtarent flex {% if enquiry.author == reply.author %}justify-start{% else %}justify-end{% endif %}">
+          <div class="shadow-md rounded-md cursor-pointer p-4 my-4 mx-4 w-3/4 bg-orange-trans bg-opacity-10 dark:bg-green-trans dark:bg-opacity-10">
+            <div class="flex justify-between">
+              <h2 class="text-xl text-gray-800 dark:text-gray-200">{{ reply.product.name }} - {{ reply.product.brand }}</h2>
+              <h2 class="text-gray-800 dark:text-gray-200">{{ reply.author }}</h2>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">{{ reply.message }}</p>
+          </div>
+        </div>
+      {% endfor %}
+      <form class="p-2 mt-6 absolute bottom-20 w-full left-0 md:px-32 px-4"
+            action="{% url 'create_enquiry' %}"
+            method="post"
+            hx-target="#main"
+            hx-boost="true">
+        {% csrf_token %}
+        <input type="hidden" name="parent" value="{{ enquiry.id }}" />
+        <input type="hidden" name="product" value="{{ enquiry.product.id }}" />
+        <div class="flex justify-between">
+          <textarea placeholder="Message"
+                    required
+                    class="p-2 flex-1 rounded-md focus:outline-none focus:ring-0 border border-gray-800 dark:border-gray-200 bg-transparent text-gray-800 dark:text-gray-200"
+                    name="message"></textarea>
+          <div class="mx-2 flex flex-col justify-end">
+            <button class="px-4 py-2 text-gray-800 dark:text-gray-200 bg-blue-500 rounded-xl"
+                    type="submit">Reply</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock body %}

@@ -1,0 +1,134 @@
+{% extends base %}
+{% load customtags %}
+{% load static %}
+{% block body %}
+    {% if user.is_authenticated %}
+        {% cart_count cart as cartCount %}
+        {% if cartCount != 0 %}
+            <section>
+                <h1 class="my-8 text-xl text-center text-black dark:text-white font-semibold">Checkout</h1>
+                <div class="flex flex-1 flex-wrap gap-4 justify-around">
+                    <div class="overflow-auto">
+                        <div class="flex flex-wrap gap-4 relative overflow-auto rounded-xl shadow-md">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3">Name</th>
+                                        <th scope="col" class="px-4 py-3">Category</th>
+                                        <th scope="col" class="px-4 py-3">Brand</th>
+                                        <th scope="col" class="px-4 py-3">Unit Price</th>
+                                        <th scope="col" class="px-4 py-3">Total Price</th>
+                                        <th scope="col" class="px-4 py-3">Discounted Price</th>
+                                        <th scope="col" class="px-4 py-3">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cartItem in page.object_list %}
+                                        {% if cartItem.quantity != 0 %}
+                                            <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                                <td scope="row"
+                                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                    <a href="{% url 'get_product' cartItem.product.id %}">{{ cartItem.product.name }}</a>
+                                                </td>
+                                                <td class="px-4 py-3">{{ cartItem.product.category }}</td>
+                                                <td class="px-4 py-3">{{ cartItem.product.brand }}</td>
+                                                <td class="px-4 py-3">
+                                                    ₹
+                                                    {% if request.user.is_business %}
+                                                        {{ cartItem.product.businessPrice }}
+                                                    {% else %}
+                                                        {{ cartItem.product.price }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="px-4 py-3">₹ {{ cartItem.totalPrice }}</td>
+                                                <td class="px-4 py-3">₹ {{ cartItem.discountedPrice }}</td>
+                                                <td class="py-3 px-4">{{ cartItem.quantity }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                        <td scope="row"
+                                            class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            Total
+                                        </td>
+                                        <td class="px-4 py-3"></td>
+                                        <td class="px-4 py-3"></td>
+                                        <td class="px-4 py-3"></td>
+                                        <td class="px-4 py-3">₹ {% cart_total cart %}</td>
+                                        <td class="px-4 py-3">₹ {% cart_total_discount cart %}</td>
+                                        <td class="px-4 py-3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        {% url "checkout" as checkout %}
+                        {% include "partials/pagignation.html" with page=page url=checkout %}
+                    </div>
+                    <div id="sideCard"
+                         class="flex flex-col gap-4 bg-green-trans dark:bg-orange-trans bg-opacity-30 dark:bg-opacity-30 backdrop-blur-lg rounded-xl shadow-lg p-2">
+                        {% if request.user.addresses.all %}
+                            <h1 class="my-2 text-lg text-center text-black dark:text-white font-semibold">Select Delivery Address</h1>
+                        {% endif %}
+                        <form action="{% url 'create_order' %}" x-data="{'isChecked':''}"
+                              hx-target="#main"
+                              hx-boost="true"
+                              hx-indicator="#baseLoading"
+                              class="flex flex-col gap-3 max-h-[35vh] overflow-auto px-2 py-1"
+                              method="post">
+                            {% csrf_token %}
+                            {% for address in request.user.addresses.all %}
+                                <label x-model="isChecked"
+                                       :aria-checked="isChecked"
+                                       class="flex flex-col gap-4"
+                                       for="address{{ address.id }}">
+                                    <input type="radio"
+                                           name="address"
+                                           id="address{{ address.id }}"
+                                           value="{{ address.id }}"
+                                           class="hidden"
+                                           aria-labelledby="addressLabel">
+                                    {% include "partials/addressCard.html" with address=address %}
+                                </label>
+                            {% endfor %}
+                            <input type="submit" id="#submitAddressForm" class="hidden">
+                        </form>
+                        {% if request.user.addresses.all %}
+                            <h1 class="my-2 text-lg text-center text-black dark:text-white font-semibold">OR</h1>
+                        {% endif %}
+                        <div class="flex justify-center items-center">
+                            <button hx-post="{% url 'add_address_form' %}"
+                                    hx-target="#sideCard"
+                                    hx-swap="innerHTML"
+                                    hx-indicator="#innerLoading"
+                                    type="button"
+                                    class="py-2 px-4 font-medium capitalize transition duration-300 ease-in-out transform rounded-xl dark:hover:bg-gray-300 hover:bg-gray-700 dark:bg-gray-200 bg-gray-800 dark:text-gray-800 text-gray-200 focus:outline-none active:scale-95">
+                                Add New Address
+                            </button>
+                        </div>
+                        {% include "partials/loading.html" with id="innerLoading" %}
+                    </div>
+                </div>
+                <div class="flex justify-around gap-4 relative overflow-x-auto">
+                    <label for="#submitAddressForm"
+                           class="mt-4 cursor-pointer px-4 py-2 text-sm font-semibold text-gray-200 bg-blue-500 rounded-md focus:outline-none"
+                           type="submit">Confirm Order</label>
+                </div>
+            </section>
+        {% else %}
+            <p class="text-center text-xl text-gray-800 dark:text-gray-200">
+                You have no items in your cart. Please add some items to your cart.
+            </p>
+        {% endif %}
+    {% else %}
+        <p class="text-center text-xl text-gray-800 dark:text-gray-200">
+            You need to be logged in to view your orders. Please
+            <a hx-boost="true"
+               hx-target="#main"
+               hx-indicator="#baseLoading"
+               class="text-blue-500"
+               href="{% url 'signin' %}">Login Here.</a>
+        </p>
+    {% endif %}
+{% endblock body %}

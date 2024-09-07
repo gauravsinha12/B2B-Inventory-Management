@@ -1,0 +1,77 @@
+{% extends base %}
+{% block body %}
+    <div class="mx-auto block max-w-xs px-8 py-5 rounded-lg shadow-2xl text-gray-800 dark:text-gray-200 bg-opacity-30 dark:bg-opacity-30 bg-orange-trans dark:bg-green-trans backdrop-blur-lg">
+        <h1 class="text-2xl font-semibold">
+            {% if signUp %}
+                Sign Up
+            {% else %}
+                Sign In
+            {% endif %}
+        </h1>
+        <br />
+        <form hx-indicator="#baseLoading"
+              hx-boost="true"
+              hx-target="#main"
+              action="{% if signUp %}{% url 'signup' %}{% else %}{% url 'signin' %}{% endif %}"
+              method="post">
+              {% csrf_token %}
+              {% for el in form %}
+                <div x-data="{'value': `{% if el.value %}{{ el.value }}{% endif %}`}"
+                 class="relative border rounded-lg mb-2 dark:border-gray-200 border-gray-800 bg-transparent">
+                    <input :class="{'pt-6':value.length > 0}" x-model="value" type="{{ el.field.widget.input_type }}" name="{{ el.name }}" id="{{ el.auto_id }}" class="outline-none w-full rounded bg-transparent text-sm text-black dark:text-white font-semibold transition-all duration-200 ease-in-out p-2"
+                    {% if el.value %}value="{{ el.value }}"{% endif %}
+                    {% if el.field.required %}required{% endif %}
+                    />
+                    <label :class="value.length > 0 ? 'text-xs font-semibold' : 'text-sm'" id="{{ el.auto_id }}_label" class="absolute top-0 left-0 flex items-center text-gray-800 dark:text-gray-200 p-2 transition-all duration-200 ease-in-out" for={{ el.auto_id }}>
+                        {{ el.label }} {% if el.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                </div>
+              {{ el.help_text|safe }}
+            {% endfor %}
+            <div class="flex justify-end">
+                <input type="submit"
+                value="{% if signUp %}Sign Up {% else %} Sign In{% endif %}"
+                class="border border-gray-800 dark:border-gray-200 py-2 px-4 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200" />
+            </div>
+        </form>
+        <br />
+        {% if not signUp %}
+            <p>
+                Need Help?
+                <a class="text-blue-500"
+                   hx-boost="true"
+                   href="{% url 'password_reset' %}"
+                   hx-target="#main"
+                   hx-indicator="#baseLoading">Forgot Password?</a>.
+            </p>
+        {% endif %}
+        <p>
+            {% if signUp %}
+                Already
+            {% else %}
+                Don't
+            {% endif %}
+            have an account?
+            <a class="text-blue-500"
+               hx-boost="true"
+               href="{% if signUp %}{% url 'signin' %}{% else %}{% url 'signup' %}{% endif %}"
+               hx-target="#main"
+               hx-indicator="#baseLoading">
+                {% if signUp %}
+                    Sign In
+                {% else %}
+                    Sign Up
+                {% endif %}
+            </a>.
+        </p>
+    </div>
+    {% if errors %}
+        {% for field,errors in errors.items %}
+            {% for error in errors %}
+                <div class="notification-box absolute px-2 flex flex-col items-center justify-end w-52 top-12 right-1 z-50 p-3">
+                    <script>sendNotification("error", "{{ field }} - {{ error|striptags }}");</script>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock body %}

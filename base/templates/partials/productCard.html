@@ -1,0 +1,85 @@
+{% load customtags %}
+<div id="product_{{ product.id }}"
+     class="relative group flex w-full max-w-[250px] flex-col overflow-hidden rounded-xl shadow hover:shadow-xl bg-orange-trans dark:bg-green-trans backdrop-blur-lg bg-opacity-30 dark:bg-opacity-30 transition-transform duration-300">
+    <a hx-boost="true"
+       hx-target="#main"
+       href="{% url 'get_product' product.id %}">
+        <div class="flex items-end justify-end h-60 w-full bg-cover relative"
+             style="background-image: url('{{ product.image1.url }}');
+                    background-repeat:no-repeat">
+            <span class="absolute top-0 left-0 m-2 rounded-full bg-green-trans dark:bg-orange-trans px-2 text-center text-sm font-medium text-gray-200 dark:text-gray-800">
+                {{ product.brand }}
+            </span>
+            <span class="absolute bottom-0 left-0 m-2 rounded-full bg-green-trans dark:bg-orange-trans px-2 text-center text-sm font-medium text-gray-200 dark:text-gray-800">
+                {{ product.category }}
+            </span>
+            {% if product.discount != 0 %}
+                <span class="absolute top-0 right-0 m-2 rounded-full bg-green-trans dark:bg-orange-trans px-2 text-center text-sm font-medium text-gray-200 dark:text-gray-800">
+                    {{ product.discount }}% OFF
+                </span>
+            {% endif %}
+        </div>
+    </a>
+    <div class="mt-4 px-5 pb-5">
+        <a hx-boost="true"
+           hx-target="#main"
+           href="{% url 'get_product' product.id %}"
+           class="flex w-full justify-between items-center">
+            <span class="text-xl dark:text-gray-200 text-gray-800">{{ product.name }}</span>
+        </a>
+        <div class="flex w-full justify-between items-center">
+            {% if user.is_business %}
+                <p class="text-gray-800 cursor-pointer dark:text-gray-200 font-semibold">
+                    ₹
+                    {% discount product.businessPrice product.discount request.user.additional_discount as discountedPrice %}
+                    {{ discountedPrice }}
+                    {% if discountedPrice < product.businessPrice %}
+                        <span class="text-sm font-normal line-through">{{ product.businessPrice }}</span>
+                    {% endif %}
+                </p>
+            {% else %}
+                <p class="text-gray-800 cursor-pointer dark:text-gray-200 font-semibold">
+                    ₹
+                    {% if request.user.is_authenticated %}
+                        {% discount product.price product.discount request.user.additional_discount as discountedPrice %}
+                        {{ discountedPrice }}
+                        {% if discountedPrice < product.price %}
+                            <span class="text-sm font-normal line-through">{{ product.price }}</span>
+                        {% endif %}
+                    {% else %}
+                        {% discount product.price product.discount 0 as discountedPrice %}
+                        {{ discountedPrice }}
+                        {% if discountedPrice < product.price %}
+                            <span class="text-sm font-normal line-through">{{ product.price }}</span>
+                        {% endif %}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        <div class="flex justify-between items-center">
+            <p class="text-gray-800 cursor-pointer dark:text-gray-200 font-semibold">
+                {% if request.user.is_business %}
+                    {{ product.inCase }}/Case
+                {% else %}
+                    {{ product.packOf }}/Box
+                {% endif %}
+            </p>
+            {% if user.is_authenticated %}
+                {% cart request.user product as cart %}
+                {% if cart.quantity != 0 and cart != None %}
+                    {% include "partials/cart/addToCartActive.html" with cart=cart %}
+                {% else %}
+                    {% include "partials/cart/addToCart.html" with cart=product %}
+                {% endif %}
+            {% else %}
+                <div class="flex items-center justify-end text-center text-sm font-medium text-gray-200 dark:text-gray-800 focus:outline-none">
+                    <a hx-target="#main"
+                       hx-boost="true"
+                       hx-indicator="#baseLoading"
+                       href="{% url 'signin' %}"
+                       class="flex items-center">{% include "icons/cart2.html" %}</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

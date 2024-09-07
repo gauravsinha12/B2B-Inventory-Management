@@ -1,0 +1,11 @@
+<main id="main" class="flex-1 flex flex-col justify-between">
+    {% block body %}
+    {% endblock body %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="notification-box absolute px-2 flex flex-col items-center justify-end w-52 top-12 right-1 z-50 p-3">
+                <script>sendNotification("{{ message.tags }}", "{{ message|safe }}");</script>
+            </div>
+        {% endfor %}
+    {% endif %}
+</main>

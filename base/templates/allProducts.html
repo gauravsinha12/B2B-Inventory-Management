@@ -1,0 +1,160 @@
+{% extends base %}
+{% load static %}
+{% load customtags %}
+{% block body %}
+    <section>
+        {% if products %}
+            <div class="flex flex-wrap gap-4 relative max-h-screen overflow-auto md:mx-32 mx-4 rounded-xl shadow-md">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Name</th>
+                            <th scope="col" class="px-4 py-3">Price</th>
+                            <th scope="col" class="px-4 py-3">Discount</th>
+                            <th scope="col" class="px-4 py-3">Pack Contains</th>
+                            <th scope="col" class="px-4 py-3">Case Contains</th>
+                            <th scope="col" class="px-4 py-3">Category</th>
+                            <th scope="col" class="px-4 py-3">Brand</th>
+                            <th scope="col" class="px-4 py-3">Media</th>
+                            <th scope="col" class="px-4 py-3">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for product in products.object_list %}
+                            <tr class="bg-gray-200 border-b dark:bg-gray-800 border-gray-100 dark:border-gray-700 last:border-none">
+                                <td scope="row"
+                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white dark:hover:text-blue-500 hover:text-blue-500 cursor-pointer">
+                                    <a href="{% url 'get_product' product.id %}">{{ product.name }}</a>
+                                </td>
+                                {% if not request.user.is_anonymous %}
+                                    {% if request.user.is_business %}
+                                        <td class="px-4 py-3 cursor-default">
+                                            <p>
+                                                ₹
+                                                {% discount product.businessPrice product.discount request.user.additional_discount as discountedPrice %}
+                                                {{ discountedPrice }}
+                                                {% if discountedPrice < product.businessPrice %}
+                                                    <span class="text-sm font-normal line-through">{{ product.businessPrice }}</span>
+                                                {% endif %}
+                                            </p>
+                                        </td>
+                                    {% else %}
+                                        <td class="px-4 py-3 cursor-default">
+                                            <p>
+                                                ₹
+                                                {% discount product.price product.discount request.user.additional_discount as discountedPrice %}
+                                                {{ discountedPrice }}
+                                                {% if discountedPrice < product.price %}
+                                                    <span class="text-sm font-normal line-through">{{ product.price }}</span>
+                                                {% endif %}
+                                            </p>
+                                        </td>
+                                    {% endif %}
+                                {% else %}
+                                <td class="px-4 py-3 cursor-default">
+                                    <p>
+                                        ₹
+                                        {% discount product.price product.discount 0 as discountedPrice %}
+                                        {{ discountedPrice }}
+                                        {% if discountedPrice < product.price %}
+                                            <span class="text-sm font-normal line-through">{{ product.price }}</span>
+                                        {% endif %}
+                                    </p>
+                                </td>
+                                {% endif %}
+                                {% if product.discount %}
+                                    <td class="px-4 py-3 cursor-default">{{ product.discount }}</td>
+                                {% endif %}
+                                <td class="px-4 py-3 cursor-default">{{ product.packOf }}</td>
+                                <td class="px-4 py-3 cursor-default">{{ product.inCase }}</td>
+                                <td class="px-4 py-3 text-gray-900 whitespace-nowrap dark:text-white dark:hover:text-blue-500 hover:text-blue-500 cursor-pointer">
+                                    <a href="{% url 'get_category' product.category.id %}">{{ product.category.name }}</a>
+                                </td>
+                                <td class="px-4 py-3 text-gray-900 whitespace-nowrap dark:text-white dark:hover:text-blue-500 hover:text-blue-500 cursor-pointer">
+                                    <a href="{% url 'get_brand' product.brand.id %}">{{ product.brand.name }}</a>
+                                </td>
+                                <td class="py-2">
+                                    {% if product.image1 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image1.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image2 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image2.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image3 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image3.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.image4 %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white" @click='showModal = !showModal; addChildToModal(`
+                                            <img src="{{ product.image4.url }}"
+                                                 alt=""
+                                                 height=""
+                                                 width=""
+                                                 class="rounded-xl object-contain w-auto h-full mx-auto">
+                                            `);'>
+                                            <img src="{% static 'images/image.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                    {% if product.video %}
+                                        <button class="focus:outline-none focus:ring-0 rounded-full bg-white"
+                                                @click='showModal = !showModal; addChildToModal(` <iframe src="{{ product.video }}" frameborder="0" height="100%" width="100%" > </iframe> `);'>
+                                            <img src="{% static 'images/video.gif' %}"
+                                                 width="32"
+                                                 height="32"
+                                                 class="rounded-full p-1"
+                                                 alt="">
+                                        </button>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-3 cursor-default">{{ product.description | slice:15 }}...</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% url "all_products" as all_products %}
+            {% include "partials/pagignation.html" with page=products url=all_products %}
+        {% else %}
+            <h1 class="my-4 w-full text-2xl text-center text-gray-800 dark:text-gray-200">No Products to Show.</h1>
+        {% endif %}
+    </section>
+{% endblock body %}

@@ -1,0 +1,39 @@
+<td hx-target="#main" hx-swap="outerHTML">
+       <form hx-post="{% url 'field_update' %}"
+             class="p-2 flex font-semibold items-center">
+              {% csrf_token %}
+              <input type="hidden" name="user" value="{{ user }}">
+              <input type="hidden" name="product" value="{{ product }}">
+              <input type="hidden" name="fieldName" value="{{ fieldName }}">
+              <input id="fieldUpdate"
+                     class="p-1 rounded-md focus:outline-none bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                     type="number"
+                     name="field"
+                     oninput="this.size = this.value.length+1"
+                     size="4"
+                     value="{{ field }}" />
+              <button type="submit" class="px-2">
+                     <svg viewBox="0 0 24 24"
+                          width="20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0">
+                            </g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                            </g>
+                            <g id="SVGRepo_iconCarrier">
+                            <path d="M4 12.6111L8.92308 17.5L20 6.5" class="stroke-green-500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            </path>
+                            </g>
+                     </svg>
+              </button>
+       </form>
+</td>
+<script>
+       var input = document.querySelector('#fieldUpdate');
+       input.addEventListener('input', resizeInput);
+       resizeInput.call(input);
+       function resizeInput() {
+              this.style.width = this.value.length +3+ "ch";
+       }
+</script>

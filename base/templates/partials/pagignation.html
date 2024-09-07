@@ -1,0 +1,41 @@
+{% load customtags %}
+<div class="flex items-center justify-end gap-3  md:mx-32 mx-4 my-2">
+    {% if page.has_previous %}
+        <a href="{{ url }}?page={{ page.previous_page_number }}"
+           hx-boost="true"
+           hx-target="#main"
+           hx-swap="outerHTML"
+           hx-indicator="#baseLoading"
+           class="text-xl text-gray-900 dark:text-gray-100">
+            <svg viewBox="0 0 24 24" width="20">
+                <g id="SVGRepo_iconCarrier">
+                <path d="M22 11.9299H2" class="stroke-gray-900 dark:stroke-gray-100" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                </path>
+                <path d="M8.00009 19L2.84009 14C2.5677 13.7429 2.35071 13.433 2.20239 13.0891C2.05407 12.7452 1.97754 12.3745 1.97754 12C1.97754 11.6255 2.05407 11.2548 2.20239 10.9109C2.35071 10.567 2.5677 10.2571 2.84009 10L8.00009 5" class="stroke-gray-900 dark:stroke-gray-100 fill-transparent" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                </path>
+                </g>
+            </svg>
+        </a>
+    {% endif %}
+    <p class="text-gray-900 dark:text-gray-100">
+        {{ page.number }}
+        <span class="mx-0.25">/</span>
+        {{ end }}
+    </p>
+    {% if page.has_next %}
+        <a href="{{ url }}?page={{ page.next_page_number }}"
+           hx-boost="true"
+           hx-target="#main"
+           hx-swap="outerHTML"
+           hx-indicator="#baseLoading">
+            <svg viewBox="0 0 24 24" width="20" transform="rotate(180)">
+                <g id="SVGRepo_iconCarrier">
+                <path d="M22 11.9299H2" class="stroke-gray-900 dark:stroke-gray-100" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                </path>
+                <path d="M8.00009 19L2.84009 14C2.5677 13.7429 2.35071 13.433 2.20239 13.0891C2.05407 12.7452 1.97754 12.3745 1.97754 12C1.97754 11.6255 2.05407 11.2548 2.20239 10.9109C2.35071 10.567 2.5677 10.2571 2.84009 10L8.00009 5" class="stroke-gray-900 dark:stroke-gray-100 fill-transparent" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                </path>
+                </g>
+            </svg>
+        </a>
+    {% endif %}
+</div>

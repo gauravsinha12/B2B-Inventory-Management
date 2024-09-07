@@ -1,0 +1,99 @@
+{% load customtags %}
+<div class="flex items-center justify-around rounded-xl shadow-md bg-gray-100 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-50">
+    <div class="flex flex-col justify-center items-center p-4 relative overflow-hidden">
+        <img width=""
+             height=""
+             class="w-40 h-40 rounded-md object-cover"
+             src="{{ order.product.image1.url }}"
+             alt="{{ order.product.name }}">
+        <span class="absolute top-0 right-0 m-2 rounded-full bg-green-trans dark:bg-orange-trans px-2 text-center text-sm font-medium text-gray-200 dark:text-gray-800">
+            {{ order.product.category }}
+        </span>
+    </div>
+    <div class="flex flex-col justify-around items-center p-2">
+        <div>
+            <p class="text-center text-sm text-gray-800 dark:text-gray-200 font-semibold">{{ order.product.brand }}</p>
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">{{ order.product.name }}</p>
+            <p class="text-center text-sm text-gray-800 dark:text-gray-200 font-semibold">
+                ₹
+                {% if order.user.is_business %}
+                    {% if order.user.additional_discount %}
+                        {% discount order.product.businessPrice order.product.discount order.user.additional_discount %}
+                    {% else %}
+                        {% discount order.product.businessPrice order.product.discount 0 %}
+                    {% endif %}
+                {% else %}
+                    {% if order.user.additional_discount %}
+                        {% discount order.product.price order.product.discount order.user.additional_discount %}
+                    {% else %}
+                        {% discount order.product.price order.product.discount 0 %}
+                    {% endif %}
+                {% endif %}
+                /-
+            </p>
+            <p class="text-gray-800 dark:text-gray-200 font-semibold">
+                {% if order.user.is_business %}
+                    {{ order.product.inCase }}/Case
+                {% else %}
+                    {{ order.product.packOf }}/Box
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">₹ {{ order.discountedPrice }}</p>
+            <p class="text-center text-sm text-gray-500 dark:text-gray-200 line-through">
+                {% if order.totalPrice > order.discountedPrice %}₹ {{ order.totalPrice }}{% endif %}
+            </p>
+            <div class="flex flex-row items-center justify-center">
+                <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">{{ order.quantity }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col justify-around items-center p-2">
+        <div class="flex flex-col items-center">
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">
+                {{ order.created|date:"d/m/Y" }}
+            </p>
+            <p class="text-center text-gray-800 dark:text-gray-200 font-semibold">
+                {{ order.created|date:"h:i a" }}
+            </p>
+            <button class="text-center text-blue-500 font-semibold" 
+                @click='showModal = !showModal; addChildToModal(`
+                    <div class="text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-50 shadow cursor-pointer rounded-xl">
+                        <div class="flex">
+                            <div class="flex-1 p-4 overflow-hidden">
+                                <ul>
+                                    <li> {{ order.user.full_name }}</li>
+                                    <li> <address class="break-all">{{ order.address.address }}</address></li>
+                                    <li> {{ order.address.pincode }} {{ order.address.city }}</li>
+                                    <li> {% state_name order.address.state %}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `);'>
+                To : {{ order.user.first_name }}
+            </button>
+            <p>
+                {% if order.status == 1 %}
+                    <span class="bg-yellow-500 rounded-full p-1 text-sm font-semibold text-gray-900">Processing</span>
+                {% elif order.status == 2 %}
+                    <span class="bg-sky-500 rounded-full p-1 text-sm font-semibold text-gray-100">Confirmed</span>
+                {% elif order.status == 3 %}
+                    <span class="bg-emerald-500 rounded-full p-1 text-sm font-semibold text-gray-100">Shipped</span>
+                {% elif order.status == 4 %}
+                    <span class="bg-green-500 rounded-full p-1 text-sm font-semibold text-gray-100">Delivered</span>
+                {% elif order.status == 5 %}
+                    <span class="bg-red-500 rounded-full p-1 text-sm font-semibold text-gray-100">Cancelled</span>
+                {% endif %}
+            </p>
+        </div>
+        {% if order.status == 1 %}
+        <form hx-boost="true" hx-target="#main" action="{% url "cancel_order" %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ order.id }}" name="order_id">
+            <input type="submit" value="Cancel" class="px-4 py-1 rounded-full bg-red-500 text-gray-200 font-semibold">
+        </form>
+        {% endif %}
+    </div>
+</div>

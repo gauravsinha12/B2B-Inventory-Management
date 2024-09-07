@@ -1,0 +1,51 @@
+{% extends base %}
+{% block body %}
+    <section>
+        <div class="flex flex-1 flex-wrap gap-4 justify-center">
+            <div id="userDetails">
+                <h1 class="my-8 text-xl text-center text-black dark:text-white font-semibold">Details</h1>
+                <div class="flex gap-4 bg-green-trans text-gray-800 dark:text-gray-200 dark:bg-orange-trans bg-opacity-30 dark:bg-opacity-30 backdrop-blur-lg rounded-xl shadow-lg p-2">
+                    <div class="flex-1 p-4 overflow-hidden">
+                        <ul>
+                            <li>{{ request.user.full_name }}</li>
+                            <li>{{ request.user.email }}</li>
+                            <li>{{ request.user.phone }}</li>
+                            {% if request.user.is_business %}<li>Business User</li>{% endif %}
+                        </ul>
+                    </div>
+                    <div class="flex-none pt-2.5 pr-2.5 pl-1">
+                        <button hx-get="{% url 'change_profile_form' %}"
+                                hx-indicator="#profileLoading"
+                                hx-target="#userDetails"
+                                hx-swap="innerHTML"
+                                type="button"
+                                class="px-2 py-2 font-medium tracking-wide text-black capitalize transition duration-300 ease-in-out transform rounded-xl hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none active:scale-95">
+                            {% include "icons/edit.html" %}
+                        </button>
+                    </div>
+                    {% include "partials/loading.html" with id="profileLoading" %}
+                </div>
+            </div>
+            <div>
+                <h1 class="my-8 text-xl text-center text-black dark:text-white font-semibold">Addresses</h1>
+                <div id="sideCard"
+                     class="bg-green-trans dark:bg-orange-trans bg-opacity-30 dark:bg-opacity-30 backdrop-blur-lg rounded-xl shadow-lg p-2 flex flex-col gap-4 max-h-[45vh] overflow-auto px-2">
+                    {% for address in request.user.addresses.all %}
+                        {% include "partials/addressCard.html" with address=address %}
+                    {% endfor %}
+                    <div class="flex justify-center items-center">
+                        <button hx-post="{% url 'add_address_form' %}"
+                                hx-target="#sideCard"
+                                hx-swap="innerHTML"
+                                hx-indicator="#addressLoading"
+                                type="button"
+                                class="py-2 px-4 font-medium capitalize transition duration-300 ease-in-out transform rounded-xl dark:hover:bg-gray-300 hover:bg-gray-700 dark:bg-gray-200 bg-gray-800 dark:text-gray-800 text-gray-200 focus:outline-none active:scale-95">
+                            Add New Address
+                        </button>
+                    </div>
+                    {% include "partials/loading.html" with id="addressLoading" %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock body %}

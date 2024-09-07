@@ -1,0 +1,10 @@
+{% extends base %}
+{% block body %}
+    <div class="flex flex-wrap justify-center gap-10 lg:px-32 px-4 w-full">
+        {% for product in page.object_list %}
+            {% include "partials/productCard.html" %}
+        {% endfor %}
+    </div>
+    {% url "home" as home %}
+    {% include "partials/pagignation.html" with page=page url=home %}
+{% endblock body %}

@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body{
+    background-image: url('bg.svg');
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+#menu-toggle:checked + #menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.slider {
+  position: relative;
+  overflow: hidden;
+  width:100%;
+  height:50vh;
+}
+
+.slide {
+  position: absolute;
+  transition: all 0.5s;
+  width: 100%;
+}
+.slide img{
+  height:50vh;
+  width: 100%;
+}
+.slide iframe{
+  height:50vh;
+  width: 100%;
+}
+
+.btn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  z-index: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 18px;
+}
+.btn:active {
+  transform: scale(1.1);
+}
+.btn-prev {
+  top: 45%;
+  left: 2%;
+}
+
+.btn-next {
+  top: 45%;
+  right: 2%;
+}
+
+.hx-overlay {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: #00000074;
+  display: none;
+}
+
+.htmx-request .hx-overlay {
+  display: block;
+}
+
+.htmx-request.hx-overlay {
+  display: block;
+}
+
+.hx-overlay-inner {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.hx-overlay-content {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hx-spinner {
+  width: 75px;
+  height: 75px;
+  display: inline-block;
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.05);
+  border-top-color: #fff;
+  animation: spin 1s infinite linear;
+  border-radius: 100%;
+  border-style: solid;
+}
+
+@keyframes spin {
+100% {
+  transform: rotate(360deg);
+}
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #7b747a #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #7b747a;
+  border-radius: 10px;
+  border: 5px solid transparent;
+}
